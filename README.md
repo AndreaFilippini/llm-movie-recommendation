@@ -21,7 +21,7 @@ The file is structured in such a way that for each user, each identified by a un
 It is possible to interact with the LLM via a web interface defined by the gradio library.
 
 # Token Setup
-To take advantage of the application, it is necessary to prepare in the same folder as the project a **.env** file.
+To take advantage of the application, it is necessary to set up in the project folder a **.env** file.
 This file will contain the environment variables, one for each service access token, which will be automatically loaded via the **dotenv** library.
 
 The keys required for proper operation of the application are as follows:
@@ -38,7 +38,7 @@ The application is executable via the command:
   python llm.py
 </p>
 
-Once this is done, to interact with the model, you need to connect via browser at:
+Once this is done, to interact with the model, it is necessary to connect with a browser at the following address:
 <p align="center">
   http://127.0.0.1:7860
 </p>
