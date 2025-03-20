@@ -44,7 +44,6 @@ def format_user_preferences(preferences):
         formatted_preferences.append(f"Favorite Genres: {', '.join(preferences['favorite_genres'])}")
     if "disliked_genres" in preferences:
         formatted_preferences.append(f"Disliked Genres: {', '.join(preferences['disliked_genres'])}")
-
     return "\n".join(formatted_preferences)
 
 # function used to do a genre mapping, by relating the id to the gender name
@@ -57,8 +56,9 @@ def fetch_genre_mapping(api_key):
 def fetch_movie_data(api_key, num_movies):
     url = f"https://api.themoviedb.org/3/movie/popular?api_key={tmdb_token}&language=en-US&page=1"
     response = requests.get(url).json()
-    return response['results'][:num_movies]  # Fetch top N popular movies
+    return response['results'][:num_movies]
 
+# Function used to perform data preprocessing, aggregating the information of movies and their genre
 def preprocess_movie_data(movies, genre_mapping):
     processed_movies = []
     for movie in movies:
