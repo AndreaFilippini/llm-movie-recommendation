@@ -1,0 +1,16 @@
+[
+    {
+        "user_id": "1",
+        "preferences": {
+            "favorite_genres": ["Fantasy", "Adventure"],
+            "disliked_genres": ["Horror"]
+        }
+    },
+	{
+        "user_id": "2",
+        "preferences": {
+            "favorite_genres": ["Romantic"],
+            "disliked_genres": ["Fantasy"]
+        }
+    }
+]
