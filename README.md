@@ -17,7 +17,7 @@ Next, the embeddings are converted into **TextNode** llama-index objects in orde
 The similarity search exploits the vector database **SimpleVectorStore** provided by llama-index.
 After extracting information based on user input by similarity, the user input prompt is formatted with the obtained information to enrich the context and to make the LLM search more precise.
 The recommendation system is enhanced by a simple preference system saved in a **preferences.json** file.
-The file is structured in such a way that for each user, each identified by a unique identifier, likes and dislikes are associated, automatically including this information in the input prompt.
+The file is structured in such a way that for each user, each identified by a unique identifier, likes and dislikes genres are associated, automatically including this information in the input prompt.
 It is possible to interact with the LLM via a web interface defined by the gradio library.
 
 # Token Setup
