@@ -10,12 +10,12 @@ from huggingface_hub import login
 from huggingface_hub import InferenceClient
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
-from langchain.schema.runnable import RunnableSequence
 from sentence_transformers import SentenceTransformer
-from llama_index.core import VectorStoreIndex, Settings
+from llama_index.core import VectorStoreIndex, Document, Settings
 from llama_index.core.schema import TextNode
 from llama_index.core.storage.storage_context import StorageContext
-from llama_index.core.vector_stores import SimpleVectorStore
+from llama_index.vector_stores.faiss import FaissVectorStore
+import faiss
 import gradio as gr
 
 # number of movies to be retrieved
@@ -91,22 +91,13 @@ def get_llm_response(hugging_token, tmdb_token, user_input, user_id):
     
     # init embedding model
     transformer_path = "sentence-transformers/all-MiniLM-L6-v2"
-    embedding_model = SentenceTransformer(transformer_path)
     Settings.embed_model = HuggingFaceEmbeddings(model_name = transformer_path)
     
-    # Generate embeddings for movie data
-    movie_embeddings = []
+    # Create documents from movies
+    documents = []
     for movie in processed_movies:
-        text = f"{movie['title']} {movie['description']} {movie['genres']}"
-        embedding = embedding_model.encode(text)
-        movie_embeddings.append((movie['id'], embedding))
-
-    # convert movie data to LlamaIndex TextNode objects
-    nodes = []
-    for movie, (movie_id, embedding) in zip(processed_movies, movie_embeddings):
-        node = TextNode(
+        doc = Document(
             text = f"{movie['title']} {movie['description']} {movie['genres']}",
-            embedding = embedding.tolist(),
             metadata={
                 "id": movie['id'],
                 "title": movie['title'],
@@ -114,22 +105,21 @@ def get_llm_response(hugging_token, tmdb_token, user_input, user_id):
                 "genres": movie['genres'],
             }
         )
-        nodes.append(node)
+        documents.append(doc)
 
-    # init vector db
-    vector_store = SimpleVectorStore()
+    # init FaissVectorStore
+    dimension = 768
+    faiss_index = faiss.IndexFlatL2(dimension)
+    vector_store = FaissVectorStore(faiss_index)
 
-    # Create a storage context
-    storage_context = StorageContext.from_defaults(vector_store = vector_store)
-
-    # Create an index
-    index = VectorStoreIndex(nodes = nodes, storage_context=storage_context)
-
+    # Create VectorStoreIndex
+    index = VectorStoreIndex.from_documents(documents, vector_store=vector_store)
+    
     # uses llama index to get the five similar movies with respect to the input
     retriever = index.as_retriever(similarity_top_k = 5)
     retrieved_movies = retriever.retrieve(user_input)
     retrieved_text = "\n".join([node.text for node in retrieved_movies])
-
+    
     # define the prompt template
     prompt_template = PromptTemplate(
         input_variables=["user_input", "user_preferences", "retrieved_text"],
