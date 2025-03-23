@@ -6,17 +6,18 @@ Simple movie recommendation system based on **Mistral** LLM with data management
 
 [Hugging Face](https://huggingface.co/)
 
-[LLama-Index](https://www.llamaindex.ai/)
+[Faiss](https://www.gradio.app/)
+
+[LLama-Index](https://faiss.ai/index.html)
 
 [Gradio](https://www.gradio.app/)
 
 # General functioning
 The information of the most popular movies are initially extracted with tmdb APIs and pre-processed to aggregate the genre information of the individual film with its title and description.
-These data become the starting point for embedding generation by the **all-MiniLM-L6-v2** transformer.
-Next, the embeddings are converted into **TextNode** llama-index objects in order to exploit them for semantic search based on user input.
-The similarity search exploits the vector database **SimpleVectorStore** provided by llama-index.
+These data become the starting point for the generation of embeddings by the **all-MiniLM-L6-v2** transformer, which creates for each movie a document that will be then converted into embeddings for **Faiss**.
+The similarity search exploits the faiss vector database included as backend in llama-index with **FaissVectorStore**.
 After extracting information based on user input by similarity, the user input prompt is formatted with the obtained information to enrich the context and to make the LLM search more precise.
-The recommendation system is enhanced by a simple preference system saved in a **preferences.json** file.
+The recommendation system is enhanced by a simple preference system saved in a "**preferences.json**" file.
 The file is structured in such a way that for each user, each identified by a unique identifier, likes and dislikes genres are associated, automatically including this information in the input prompt.
 It is possible to interact with the LLM via a web interface defined by the gradio library.
 
